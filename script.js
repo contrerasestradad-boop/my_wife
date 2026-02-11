@@ -1,12 +1,13 @@
-// TUS TEXTOS ORIGINALES (NO CAMBIADOS)
+// TEXTOS ORIGINALES
 const titleText = "Se que hice esto una vez, pero aun te sigo amando como nunca 💗💗💗";
-const t1 = "Si pudiera elegir el lugar mas seguro que conozco, siempre sería a tu lado. My beautiful wife <3333.";
-const t2 = "Cada dia estando junto a ti es un dia inolvidable, que siempre voy a tener en mi corazón, ya que eres lo mas preciado de mi vida.";
+const text1 = "Si pudiera elegir el lugar mas seguro que conozco, siempre sería a tu lado. My beautiful wife <3333.";
+const text2 = "Cada dia estando junto a ti es un dia inolvidable, que siempre voy a tener en mi corazón, ya que eres lo mas preciado de mi vida.";
 const finalText = "— I Love You, My beautiful Woman 💗";
 
 function typeWriter(elementId, text, speed, callback) {
     let i = 0;
     const element = document.getElementById(elementId);
+    element.innerHTML = "";
     function typing() {
         if (i < text.length) {
             element.innerHTML += text.charAt(i);
@@ -27,25 +28,31 @@ function updateTime() {
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((diff / (1000 * 60)) % 60);
     const seconds = Math.floor((diff / 1000) % 60);
-    document.getElementById("time").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    document.getElementById("time").innerHTML = 
+        `${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
 }
+
 setInterval(updateTime, 1000);
+updateTime();
 
 document.getElementById("playButton").addEventListener("click", function() {
-    document.getElementById("music").play();
+    // Música
+    const music = document.getElementById("music");
+    music.play().catch(e => console.log("Error con audio:", e));
+    
+    // Abrir sobre
+    document.getElementById("envelope").classList.remove("close");
     document.getElementById("envelope").classList.add("open");
     this.style.display = "none";
-    
-    // Iniciar escritura después de que se abra el sobre
+
+    // Esperar a que suba la carta para escribir
     setTimeout(() => {
-        typeWriter("title", titleText, 40, () => {
-            typeWriter("text1", t1, 25, () => {
-                typeWriter("text2", t2, 25, () => {
-                    typeWriter("final", finalText, 40);
+        typeWriter("title", titleText, 45, () => {
+            typeWriter("text1", text1, 30, () => {
+                typeWriter("text2", text2, 30, () => {
+                    typeWriter("final", finalText, 45);
                 });
             });
         });
-    }, 800);
+    }, 1000);
 });
-
-updateTime();
