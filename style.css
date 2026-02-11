@@ -357,3 +357,85 @@ button:hover{
   .leaf, .tree-heart, .tree-heart-big{ animation:none !important; }
   #envelope .flap, .letter{ transition:none !important; }
 }
+
+
+/* =========================
+   EXTRA: corazones flotando fondo
+   ========================= */
+.fx-heart{
+  position: fixed;
+  bottom: -40px;
+  z-index: 0;              /* detrás del sobre */
+  pointer-events: none;
+  filter: drop-shadow(0 8px 10px rgba(0,0,0,.12));
+  will-change: transform, opacity;
+  animation: floatUp var(--dur, 8s) linear forwards;
+  transform: translateZ(0);
+}
+
+@keyframes floatUp{
+  0%{
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10%{ opacity: 1; }
+  100%{
+    transform: translate(var(--dx, 0px), -110vh) rotate(var(--rot, 180deg));
+    opacity: 0;
+  }
+}
+
+/* =========================
+   EXTRA: explosión al abrir
+   ========================= */
+.burst-heart{
+  position: fixed;
+  z-index: 1200;          /* arriba de todo */
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 10px 14px rgba(0,0,0,.18));
+  will-change: transform, opacity;
+  animation: burst var(--dur, 1.5s) ease-out forwards;
+}
+
+@keyframes burst{
+  0%{
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100%{
+    transform: translate(calc(-50% + var(--bx, 0px)), calc(-50% + var(--by, -180px))) rotate(var(--rot, 180deg)) scale(.6);
+    opacity: 0;
+  }
+}
+
+/* =========================
+   EXTRA: sobre con vida (cerrado)
+   ========================= */
+#envelope.close{
+  animation: envelopeBob 2.6s ease-in-out infinite;
+}
+
+#envelope.open{
+  animation: none;
+}
+
+@keyframes envelopeBob{
+  0%,100%{ transform: translateY(0px); }
+  50%{ transform: translateY(-8px); }
+}
+
+/* botoncito con pulso suave */
+#playButton{
+  animation: btnPulse 2.2s ease-in-out infinite;
+}
+@keyframes btnPulse{
+  0%,100%{ transform: translateX(-50%) scale(1); }
+  50%{ transform: translateX(-50%) scale(1.04); }
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .fx-heart, .burst-heart, #envelope.close, #playButton{ animation: none !important; }
+}
+
