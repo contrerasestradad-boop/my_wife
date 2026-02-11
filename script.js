@@ -19,13 +19,12 @@ function typeWriter(elementId, text, speed, callback) {
             callback();
         }
     }
-
     typing();
 }
 
 // CONTADOR
 function updateTime() {
-    const startDate = new Date("2023-10-18T00:00:00"); // Cambia si quieres
+    const startDate = new Date("2023-10-18T00:00:00");
     const now = new Date();
     const diff = now - startDate;
 
@@ -45,52 +44,23 @@ document.getElementById("playButton").addEventListener("click", function() {
     document.getElementById("music").play();
 });
 
-// CORAZÓN EN CANVAS
-const canvas = document.getElementById("heartCanvas");
-const ctx = canvas.getContext("2d");
+// CREAR HOJAS EN FORMA DE CORAZÓN
+const leaves = document.getElementById("leaves");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+for (let i = 0; i < 40; i++) {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "❤️";
 
-let particles = [];
+    heart.style.left = Math.random() * 280 + "px";
+    heart.style.top = Math.random() * 280 + "px";
+    heart.style.animationDelay = Math.random() * 5 + "s";
+    heart.style.fontSize = (Math.random() * 15 + 15) + "px";
 
-function heartShape(t) {
-    const x = 16 * Math.pow(Math.sin(t), 3);
-    const y = 13 * Math.cos(t)
-        - 5 * Math.cos(2 * t)
-        - 2 * Math.cos(3 * t)
-        - Math.cos(4 * t);
-    return { x, y };
+    leaves.appendChild(heart);
 }
 
-for (let i = 0; i < 1000; i++) {
-    const t = Math.random() * Math.PI * 2;
-    const pos = heartShape(t);
-
-    particles.push({
-        x: canvas.width / 2 + pos.x * 15,
-        y: canvas.height / 2 - pos.y * 15,
-        size: Math.random() * 2 + 1
-    });
-}
-
-function drawHeart() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "rgba(255,0,100,0.8)";
-
-    particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-    });
-
-    requestAnimationFrame(drawHeart);
-}
-
-drawHeart();
-
-// INICIAR TODO
+// INICIAR
 window.onload = function() {
     typeWriter("title", titleText, 40, function() {
         typeWriter("text1", text1, 25, function() {
