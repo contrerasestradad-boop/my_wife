@@ -8,31 +8,51 @@
 </head>
 <body>
 
-<div class="container">
-    <div class="card">
-        <h1 id="title"></h1>
-        <p id="text1"></p>
-        <p id="text2"></p>
-        <h2 id="final"></h2>
-
-        <div class="contador">
-            <p>Gracias por estar conmigo todo este tiempo ❤️❤️❤️:</p>
-            <div id="time"></div>
+    <div class="envelope-wrapper">
+        <div id="envelope" class="close">
+            <div class="front flap"></div>
+            <div class="front pocket"></div>
+            <div class="letter">
+                <div class="letter-content">
+                    <div class="text-side">
+                        <h1 id="title"></h1>
+                        <p id="text1"></p>
+                        <p id="text2"></p>
+                        <h2 id="final"></h2>
+                        <div class="contador">
+                            Gracias por estar conmigo todo este tiempo ❤️❤️❤️:
+                            <div id="time"></div>
+                        </div>
+                    </div>
+                    <div class="tree-side">
+                        <div class="tree">
+                            <div class="tree-leaves">
+                                <div class="tree-heart" style="top:10%; left:50%">❤️</div>
+                                <div class="tree-heart" style="top:30%; left:30%">❤️</div>
+                                <div class="tree-heart" style="top:30%; left:70%">❤️</div>
+                                <div class="tree-heart" style="top:50%; left:20%">❤️</div>
+                                <div class="tree-heart" style="top:50%; left:50%">❤️</div>
+                                <div class="tree-heart" style="top:50%; left:80%">❤️</div>
+                            </div>
+                            <div class="tree-trunk"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hearts">
+                <div class="heart a1"></div>
+                <div class="heart a2"></div>
+                <div class="heart a3"></div>
+            </div>
         </div>
     </div>
 
-    <div class="tree-container">
-        <div class="leaves" id="leaves"></div>
-        <div class="trunk"></div>
-    </div>
-</div>
+    <audio id="music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
-<audio id="music" loop>
-    <source src="music.mp3" type="audio/mpeg">
-</audio>
+    <button id="playButton">💗 Toca aqui para una sorpresa :0 💗</button>
 
-<button id="playButton">💗 Toca aquí para una sorpresa 💗</button>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
