@@ -1,5 +1,5 @@
 // -------- CONTADOR --------
-const startDate = new Date("2025-02-14 00:00:00"); // CAMBIA ESTA FECHA
+const startDate = new Date("2023-10-18 00:00:00"); // CAMBIA ESTA FECHA
 
 function updateTime() {
     const now = new Date();
@@ -67,3 +67,4 @@ button.addEventListener("click", () => {
     music.play();
     button.style.display = "none";
 });
+
