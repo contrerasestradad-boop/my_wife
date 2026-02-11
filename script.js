@@ -31,7 +31,6 @@ function updateTime() {
   document.getElementById("time").innerHTML =
     `${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
 }
-
 setInterval(updateTime, 1000);
 updateTime();
 
@@ -73,7 +72,6 @@ function buildHeartTree() {
     span.style.fontSize = `${size}px`;
     span.style.animationDelay = `${Math.random() * 1.6}s`;
     span.style.opacity = `${0.78 + Math.random() * 0.22}`;
-
     leaves.appendChild(span);
   }
 
@@ -86,7 +84,7 @@ function buildHeartTree() {
 }
 
 /* =========================
-   Hojas cayendo
+   Hojas cayendo (del árbol)
    ========================= */
 let leafInterval = null;
 
@@ -126,6 +124,72 @@ function startFallingLeaves() {
 }
 
 /* =========================
+   CORAZONES FLOTANDO (FONDO)
+   ========================= */
+let bgHeartInterval = null;
+
+function spawnBgHeart() {
+  const h = document.createElement("span");
+  h.className = "fx-heart";
+  h.textContent = Math.random() < 0.25 ? "💗" : "❤️";
+
+  const size = 14 + Math.random() * 30;
+  h.style.fontSize = `${size}px`;
+  h.style.left = `${Math.random() * 100}vw`;
+  h.style.opacity = `${0.18 + Math.random() * 0.55}`;
+
+  h.style.setProperty("--dx", `${(Math.random() * 160 - 80).toFixed(0)}px`);
+  h.style.setProperty("--dur", `${(6 + Math.random() * 7).toFixed(2)}s`);
+  h.style.setProperty("--rot", `${(Math.random() * 360 - 180).toFixed(0)}deg`);
+
+  document.body.appendChild(h);
+  h.addEventListener("animationend", () => h.remove());
+}
+
+function startBackgroundHearts() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (bgHeartInterval) return;
+
+  // un pequeño “arranque”
+  for (let i = 0; i < 10; i++) setTimeout(spawnBgHeart, i * 180);
+
+  bgHeartInterval = setInterval(spawnBgHeart, 750);
+}
+
+/* =========================
+   EXPLOSIÓN DE CORAZONES (OPEN)
+   ========================= */
+function burstHeartsAt(x, y) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const count = 26;
+  for (let i = 0; i < count; i++) {
+    const b = document.createElement("span");
+    b.className = "burst-heart";
+    b.textContent = Math.random() < 0.20 ? "💗" : "❤️";
+
+    const size = 14 + Math.random() * 18;
+    b.style.fontSize = `${size}px`;
+    b.style.left = `${x}px`;
+    b.style.top = `${y}px`;
+
+    // vector de salida
+    const bx = (Math.random() * 320 - 160).toFixed(0) + "px";
+    const by = (-(Math.random() * 260 + 60)).toFixed(0) + "px";
+    const rot = (Math.random() * 720 - 360).toFixed(0) + "deg";
+    const dur = (1.1 + Math.random() * 0.9).toFixed(2) + "s";
+
+    b.style.setProperty("--bx", bx);
+    b.style.setProperty("--by", by);
+    b.style.setProperty("--rot", rot);
+    b.style.setProperty("--dur", dur);
+
+    document.body.appendChild(b);
+    b.addEventListener("animationend", () => b.remove());
+  }
+}
+
+/* =========================
    Abrir sobre + escribir
    ========================= */
 const envelopeEl = document.getElementById("envelope");
@@ -153,20 +217,25 @@ function runTypingOnce() {
 function openEnvelope() {
   if (envelopeEl.classList.contains("open")) return;
 
+  // burst en el centro del sobre
+  const r = envelopeEl.getBoundingClientRect();
+  burstHeartsAt(r.left + r.width / 2, r.top + r.height * 0.35);
+
   envelopeEl.classList.remove("close");
   envelopeEl.classList.add("open");
 
   runTypingOnce();
   startFallingLeaves();
 
-  // Importante: pasa a "floating" para centrarla (ya NO se va a la derecha)
   setTimeout(() => {
     letterEl.classList.add("floating");
   }, 700);
 }
 
+// click/tap al sobre abre
 envelopeEl.addEventListener("click", openEnvelope);
 
+// botón: música + abre
 playBtn.addEventListener("click", function () {
   if (music.paused) {
     music.play().catch(e => console.log("Error con audio:", e));
@@ -176,5 +245,9 @@ playBtn.addEventListener("click", function () {
   openEnvelope();
 });
 
-document.addEventListener("DOMContentLoaded", buildHeartTree);
+document.addEventListener("DOMContentLoaded", () => {
+  buildHeartTree();
+  startBackgroundHearts();
+});
 buildHeartTree();
+startBackgroundHearts();
