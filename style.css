@@ -32,30 +32,29 @@ body{
     linear-gradient(180deg, var(--bg1), var(--bg2));
 }
 
-/* Patrón de corazones (AHORA DETRÁS, no encima de la carta) */
+/* Patrón detrás SIEMPRE */
 body::before{
   content:"";
   position:fixed;
   inset:0;
   pointer-events:none;
   opacity:.20;
-  z-index:0; /* clave */
+  z-index:-1;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath fill='%23ffffff' d='M60 98s-34-20-44-40C6 38 18 22 36 22c10 0 18 6 24 14c6-8 14-14 24-14c18 0 30 16 20 36C94 78 60 98 60 98z'/%3E%3C/svg%3E");
   background-size:120px 120px;
 }
 
+/* Wrapper centrado */
 .envelope-wrapper{
-  position:relative;
-  z-index:2; /* encima del patrón */
-  width:min(92vw, 860px);
-  height:min(58vh, 520px);
+  width:min(92vw, 820px);
+  height:min(60vh, 520px);
   min-height:320px;
   display:flex;
   justify-content:center;
   align-items:center;
 }
 
-/* SOBRE */
+/* Sobre */
 #envelope{
   width:100%;
   height:100%;
@@ -65,6 +64,7 @@ body::before{
   transform:translateZ(0);
 }
 
+/* sombra */
 #envelope::after{
   content:"";
   position:absolute;
@@ -74,36 +74,48 @@ body::before{
   z-index:-1;
 }
 
+/* base del sobre para que se distinga */
+#envelope::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.06));
+  pointer-events:none;
+}
+
 .front{
   position:absolute;
   inset:0;
 }
 
+/* Pocket tapa la carta en cerrado */
 .pocket{
-  z-index:3;
+  z-index:8; /* encima de la carta */
   background:linear-gradient(180deg, var(--env-mid), var(--env-dark));
-  clip-path:polygon(0 52%, 50% 86%, 100% 52%, 100% 100%, 0 100%);
+  clip-path:polygon(0 48%, 50% 78%, 100% 48%, 100% 100%, 0 100%);
   border-radius:0 0 18px 18px;
 }
 
+/* pliegues laterales para que parezca sobre */
 .pocket::before{
   content:"";
   position:absolute;
   inset:0;
-  clip-path:polygon(0 52%, 50% 86%, 0 100%);
-  background:rgba(255,255,255,.10);
+  clip-path:polygon(0 48%, 50% 78%, 0 100%);
+  background:rgba(255,255,255,.14);
 }
-
 .pocket::after{
   content:"";
   position:absolute;
   inset:0;
-  clip-path:polygon(100% 52%, 50% 86%, 100% 100%);
-  background:rgba(0,0,0,.06);
+  clip-path:polygon(100% 48%, 50% 78%, 100% 100%);
+  background:rgba(0,0,0,.08);
 }
 
+/* Flap arriba */
 .flap{
-  z-index:6;
+  z-index:10;
   background:linear-gradient(180deg, var(--env-light), var(--env-mid));
   clip-path:polygon(0 0, 100% 0, 50% 58%);
   transform-origin:top;
@@ -112,7 +124,7 @@ body::before{
   backface-visibility:hidden;
 }
 
-/* CARTA */
+/* Carta */
 .letter{
   position:absolute;
   left:5%;
@@ -121,12 +133,13 @@ body::before{
   height:78%;
   padding:22px 22px;
   border-radius:16px;
-  background:linear-gradient(180deg, var(--card1), var(--card2)); /* opaca */
+  background:linear-gradient(180deg, var(--card1), var(--card2));
   box-shadow:0 12px 26px rgba(0,0,0,.18);
-  z-index:4;
+  z-index:6; /* debajo del pocket (pocket es 8) */
   overflow:hidden;
 
-  transform:translateY(20%);
+  /* MUY IMPORTANTE: en cerrado la metemos al sobre */
+  transform:translateY(45%);
   transition:transform .85s cubic-bezier(.2,.8,.2,1);
 }
 
@@ -145,35 +158,38 @@ body::before{
   display:flex;
   align-items:center;
   justify-content:center;
-  position:relative; /* hojas cayendo */
+  position:relative;
 }
 
-/* Cuando abre: primero sale */
+/* Estado abierto */
 #envelope.open .flap{
   transform:rotateX(180deg);
-  z-index:1;
+  z-index:4;
 }
-#envelope.open .letter{
-  transform:translateY(-25%);
+
+/* La carta sube SOLO si NO es floating */
+#envelope.open .letter:not(.floating){
+  transform:translateY(-20%);
+  z-index:9; /* ahora encima del pocket */
 }
 #envelope.open .letter-content{
   opacity:1;
   transform:translateY(0);
 }
 
-/* Luego la carta se hace “modal” responsiva para que SIEMPRE se vea completa */
+/* Floating: carta centrada SIEMPRE */
 .letter.floating{
   position:fixed;
   left:50%;
   top:50%;
+  width:min(92vw, 980px);
+  height:min(82vh, 680px);
   transform:translate(-50%, -50%);
-  width:min(92vw, 900px);
-  height:min(80vh, 640px);
   z-index:999;
   overflow:auto;
 }
 
-/* TIPOGRAFÍA */
+/* Tipografía */
 h1{ font-size:18px; color:var(--pink); margin:0 0 10px; }
 p{ font-size:14px; line-height:1.45; color:var(--text); margin:8px 0; }
 h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
@@ -191,7 +207,7 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   margin-top:4px;
 }
 
-/* ÁRBOL */
+/* Árbol */
 .tree-container{
   display:flex;
   flex-direction:column;
@@ -207,7 +223,7 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   filter:drop-shadow(0 12px 16px rgba(0,0,0,.12));
 }
 
-/* Silueta de corazón (fondo) */
+/* Silueta corazón suave */
 .tree-leaves::before,
 .tree-leaves::after{
   content:"";
@@ -215,11 +231,10 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   top:18px;
   width:120px;
   height:170px;
-  background:rgba(255, 182, 193, 0.28);
+  background:rgba(255, 182, 193, 0.26);
   border-radius:120px 120px 0 0;
   z-index:1;
 }
-
 .tree-leaves::before{
   left:115px;
   transform:rotate(-45deg);
@@ -231,7 +246,6 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   transform-origin:100% 100%;
 }
 
-/* Corazones-hojas */
 .tree-heart{
   position:absolute;
   transform:translate(-50%, -50%);
@@ -239,13 +253,11 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   z-index:2;
   animation:sway 3.4s ease-in-out infinite;
 }
-
 .tree-heart-big{
   font-size:34px !important;
   z-index:3;
   animation:swayBig 2.8s ease-in-out infinite;
 }
-
 @keyframes sway{
   0%,100%{ transform:translate(-50%,-50%) rotate(-6deg) scale(1); }
   50%{ transform:translate(-50%,-50%) rotate(6deg) scale(1.06); }
@@ -262,7 +274,6 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   border-radius:12px;
   position:relative;
 }
-
 .tree-trunk::before{
   content:"";
   position:absolute;
@@ -275,7 +286,6 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   transform:rotate(-18deg);
   opacity:.95;
 }
-
 .tree-trunk::after{
   content:"";
   position:absolute;
@@ -297,7 +307,7 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   border-radius:999px;
 }
 
-/* HOJAS CAYENDO */
+/* hojas cayendo */
 .leaf{
   position:absolute;
   z-index:50;
@@ -305,20 +315,20 @@ h2{ font-size:16px; color:var(--pink2); margin:14px 0 0; }
   opacity:.95;
   filter:drop-shadow(0 4px 6px rgba(0,0,0,.14));
   animation:fall var(--dur, 3.2s) linear forwards;
-  will-change:transform, opacity;
 }
-
 @keyframes fall{
   0%{ transform:translate(0,0) rotate(0deg); opacity:1; }
   70%{ opacity:1; }
   100%{ transform:translate(var(--drift, 0px), 300px) rotate(var(--spin, 520deg)); opacity:0; }
 }
 
-/* BOTÓN */
+/* botón */
 button{
   position:fixed;
-  z-index:3;
+  left:50%;
+  transform:translateX(-50%);
   bottom:28px;
+  z-index:1000;
   padding:15px 32px;
   border:none;
   border-radius:50px;
@@ -330,16 +340,19 @@ button{
   transition:.25s ease;
   box-shadow:0 10px 22px rgba(0,0,0,.18);
 }
-button:hover{ transform:scale(1.06); background:#c2185b; }
+button:hover{
+  transform:translateX(-50%) scale(1.06);
+  background:#c2185b;
+}
 
-/* RESPONSIVE */
+/* responsive */
 @media (max-width: 700px){
   .letter-content{ flex-direction:column; gap:12px; }
   .text-side, .tree-side{ width:100%; }
   .tree-leaves{ width:220px; height:190px; margin:0 auto; }
 }
 
-/* Accesibilidad */
+/* accesibilidad */
 @media (prefers-reduced-motion: reduce){
   .leaf, .tree-heart, .tree-heart-big{ animation:none !important; }
   #envelope .flap, .letter{ transition:none !important; }
