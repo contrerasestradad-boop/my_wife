@@ -28,24 +28,119 @@ function updateTime() {
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((diff / (1000 * 60)) % 60);
     const seconds = Math.floor((diff / 1000) % 60);
-    document.getElementById("time").innerHTML = 
+    document.getElementById("time").innerHTML =
         `${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
 }
 
 setInterval(updateTime, 1000);
 updateTime();
 
-document.getElementById("playButton").addEventListener("click", function() {
-    // Música
-    const music = document.getElementById("music");
-    music.play().catch(e => console.log("Error con audio:", e));
-    
-    // Abrir sobre
-    document.getElementById("envelope").classList.remove("close");
-    document.getElementById("envelope").classList.add("open");
-    this.style.display = "none";
+/* =========================
+   ÁRBOL BONITO (corazón)
+   ========================= */
+function insideHeart(x, y) {
+    // ecuación clásica del corazón:
+    // (x^2 + y^2 - 1)^3 - x^2 * y^3 <= 0
+    const a = x * x + y * y - 1;
+    return (a * a * a - x * x * (y * y * y)) <= 0;
+}
 
-    // Esperar a que suba la carta para escribir
+function buildHeartTree() {
+    const leaves = document.querySelector(".tree-leaves");
+    if (!leaves) return;
+
+    leaves.innerHTML = "";
+
+    const total = 70;
+    for (let i = 0; i < total; i++) {
+        let x, y, tries = 0;
+
+        do {
+            x = Math.random() * 2 - 1;  // -1..1
+            y = Math.random() * 2 - 1;  // -1..1
+            tries++;
+        } while (!insideHeart(x, y) && tries < 200);
+
+        const span = document.createElement("span");
+        span.className = "tree-heart";
+        span.textContent = "❤️";
+
+        const left = (x + 1) * 50;       // 0..100
+        const top = (1 - y) * 50;        // 0..100 (invertido para DOM)
+
+        const size = 14 + Math.random() * 12;
+        span.style.left = `${left}%`;
+        span.style.top = `${top}%`;
+        span.style.fontSize = `${size}px`;
+        span.style.animationDelay = `${Math.random() * 1.8}s`;
+        span.style.opacity = `${0.75 + Math.random() * 0.25}`;
+
+        leaves.appendChild(span);
+    }
+
+    // corazón central más grande
+    const big = document.createElement("span");
+    big.className = "tree-heart tree-heart-big";
+    big.textContent = "❤️";
+    big.style.left = `50%`;
+    big.style.top = `38%`;
+    leaves.appendChild(big);
+}
+
+/* =========================
+   HOJITAS CAYENDO
+   ========================= */
+let leafInterval = null;
+
+function createFallingLeaf() {
+    const parent = document.querySelector(".tree-side");
+    const canopy = document.querySelector(".tree-leaves");
+    if (!parent || !canopy) return;
+
+    const pr = parent.getBoundingClientRect();
+    const cr = canopy.getBoundingClientRect();
+
+    const leaf = document.createElement("span");
+    leaf.className = "leaf";
+    leaf.textContent = Math.random() < 0.15 ? "💗" : "❤️";
+
+    const startLeft = (cr.left - pr.left) + Math.random() * cr.width;
+    const startTop  = (cr.top - pr.top) + Math.random() * (cr.height * 0.25);
+
+    leaf.style.left = `${startLeft}px`;
+    leaf.style.top = `${startTop}px`;
+
+    const size = 12 + Math.random() * 14;
+    leaf.style.fontSize = `${size}px`;
+
+    leaf.style.setProperty("--drift", `${(Math.random() * 140 - 70).toFixed(0)}px`);
+    leaf.style.setProperty("--dur", `${(2.6 + Math.random() * 2.2).toFixed(2)}s`);
+    leaf.style.setProperty("--spin", `${(Math.random() * 760 - 380).toFixed(0)}deg`);
+
+    parent.appendChild(leaf);
+    leaf.addEventListener("animationend", () => leaf.remove());
+}
+
+function startFallingLeaves() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    if (leafInterval) clearInterval(leafInterval);
+    leafInterval = setInterval(createFallingLeaf, 260);
+}
+
+/* =========================
+   ABRIR SOBRE + ESCRIBIR
+   ========================= */
+const envelopeEl = document.getElementById("envelope");
+const playBtn = document.getElementById("playButton");
+const music = document.getElementById("music");
+
+let openedOnce = false;
+
+function runTypingOnce() {
+    if (openedOnce) return;
+    openedOnce = true;
+
     setTimeout(() => {
         typeWriter("title", titleText, 45, () => {
             typeWriter("text1", text1, 30, () => {
@@ -54,5 +149,31 @@ document.getElementById("playButton").addEventListener("click", function() {
                 });
             });
         });
-    }, 1000);
+    }, 900);
+}
+
+function openEnvelope() {
+    if (envelopeEl.classList.contains("open")) return;
+
+    envelopeEl.classList.remove("close");
+    envelopeEl.classList.add("open");
+
+    runTypingOnce();
+    startFallingLeaves();
+}
+
+// Click al sobre para abrir (como en tu idea)
+envelopeEl.addEventListener("click", openEnvelope);
+
+// Botón: NO lo quito (mantiene música). También abre por si ella toca el botón primero.
+playBtn.addEventListener("click", function () {
+    if (music.paused) {
+        music.play().catch(e => console.log("Error con audio:", e));
+    } else {
+        music.pause();
+    }
+    openEnvelope();
 });
+
+document.addEventListener("DOMContentLoaded", buildHeartTree);
+buildHeartTree();
