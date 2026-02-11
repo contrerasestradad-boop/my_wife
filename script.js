@@ -36,11 +36,9 @@ setInterval(updateTime, 1000);
 updateTime();
 
 /* =========================
-   ÁRBOL (corazón real)
+   Árbol (corazón)
    ========================= */
 function insideHeart(x, y) {
-  // Ecuación clásica del corazón:
-  // (x^2 + y^2 - 1)^3 - x^2 * y^3 <= 0
   const a = x * x + y * y - 1;
   return (a * a * a - x * x * (y * y * y)) <= 0;
 }
@@ -51,15 +49,14 @@ function buildHeartTree() {
 
   leaves.innerHTML = "";
 
-  const total = 130;      // más corazones = mejor forma
-  const range = 1.35;     // escala para llenar bien el contenedor
+  const total = 130;
+  const range = 1.35;
 
   for (let i = 0; i < total; i++) {
     let x, y, tries = 0;
-
     do {
-      x = (Math.random() * 2 - 1) * range; // -range..range
-      y = (Math.random() * 2 - 1) * range; // -range..range
+      x = (Math.random() * 2 - 1) * range;
+      y = (Math.random() * 2 - 1) * range;
       tries++;
     } while (!insideHeart(x / range, y / range) && tries < 400);
 
@@ -67,8 +64,8 @@ function buildHeartTree() {
     span.className = "tree-heart";
     span.textContent = "❤️";
 
-    const left = ((x / range) + 1) * 50;     // 0..100
-    const top  = (1 - (y / range)) * 50;     // 0..100 (invertido)
+    const left = ((x / range) + 1) * 50;
+    const top  = (1 - (y / range)) * 50;
 
     const size = 14 + Math.random() * 14;
     span.style.left = `${left}%`;
@@ -80,7 +77,6 @@ function buildHeartTree() {
     leaves.appendChild(span);
   }
 
-  // corazón central grande
   const big = document.createElement("span");
   big.className = "tree-heart tree-heart-big";
   big.textContent = "❤️";
@@ -90,7 +86,7 @@ function buildHeartTree() {
 }
 
 /* =========================
-   HOJITAS CAYENDO
+   Hojas cayendo
    ========================= */
 let leafInterval = null;
 
@@ -130,7 +126,7 @@ function startFallingLeaves() {
 }
 
 /* =========================
-   ABRIR SOBRE + ESCRIBIR
+   Abrir sobre + escribir
    ========================= */
 const envelopeEl = document.getElementById("envelope");
 const letterEl = document.getElementById("letter");
@@ -157,24 +153,20 @@ function runTypingOnce() {
 function openEnvelope() {
   if (envelopeEl.classList.contains("open")) return;
 
-  document.body.classList.add("opened");
   envelopeEl.classList.remove("close");
   envelopeEl.classList.add("open");
 
   runTypingOnce();
   startFallingLeaves();
 
-  // para que sea 100% visible en cualquier pantalla:
-  // después del “lift”, la carta se centra como modal responsivo
+  // Importante: pasa a "floating" para centrarla (ya NO se va a la derecha)
   setTimeout(() => {
     letterEl.classList.add("floating");
-  }, 650);
+  }, 700);
 }
 
-// Click/tap al sobre
 envelopeEl.addEventListener("click", openEnvelope);
 
-// Botón: NO lo quito. Música + abre si no abrió.
 playBtn.addEventListener("click", function () {
   if (music.paused) {
     music.play().catch(e => console.log("Error con audio:", e));
