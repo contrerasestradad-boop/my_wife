@@ -1,15 +1,13 @@
 // TEXTOS
-const titleText = "Se que hice esto una vez, pero aun te sigo amando como nunca 💗💗💗";
-const text1 = "Si pudiera elegir el lugar mas seguro que conozco, siempre sería a tu lado. My beautiful wife <3333.";
-const text2 = "Cada dia estando junto a ti es un dia inolvidable, que siempre voy a tener en mi corazón, ya que eres lo mas preciado de mi vida.";
-const finalText = "— I Love You, My beautiful Woman 💗";
+const titleText = "Sé que hice esto una vez, pero aún te sigo amando como nunca 💗";
+const text1 = "Si pudiera elegir el lugar más seguro que conozco, siempre sería a tu lado. My beautiful wife.";
+const text2 = "Cada día junto a ti es un regalo inolvidable que guardo en mi corazón, eres lo más preciado de mi vida.";
+const finalText = "— I Love You Forever 💗";
 
 // EFECTO ESCRITURA
 function typeWriter(elementId, text, speed, callback) {
     let i = 0;
     const element = document.getElementById(elementId);
-    element.innerHTML = "";
-
     function typing() {
         if (i < text.length) {
             element.innerHTML += text.charAt(i);
@@ -33,42 +31,52 @@ function updateTime() {
     const minutes = Math.floor((diff / (1000 * 60)) % 60);
     const seconds = Math.floor((diff / 1000) % 60);
 
-    document.getElementById("time").innerHTML =
-        `${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
+    document.getElementById("time").innerHTML = 
+        `${days} días, ${hours}h ${minutes}m ${seconds}s`;
 }
-
 setInterval(updateTime, 1000);
 
 // MÚSICA
 document.getElementById("playButton").addEventListener("click", function() {
-    document.getElementById("music").play();
+    const music = document.getElementById("music");
+    music.play();
+    this.style.display = "none"; // Oculta el botón tras dar click
 });
 
-// CREAR HOJAS EN FORMA DE CORAZÓN
-const leaves = document.getElementById("leaves");
+// GENERAR EL ÁRBOL DE CORAZONES
+const leavesContainer = document.getElementById("leaves");
+const totalHearts = 100; // Más corazones para que se vea lleno
 
-for (let i = 0; i < 40; i++) {
+for (let i = 0; i < totalHearts; i++) {
     const heart = document.createElement("div");
     heart.classList.add("heart");
     heart.innerHTML = "❤️";
 
-    heart.style.left = Math.random() * 280 + "px";
-    heart.style.top = Math.random() * 280 + "px";
-    heart.style.animationDelay = Math.random() * 5 + "s";
-    heart.style.fontSize = (Math.random() * 15 + 15) + "px";
+    // Posicionamiento en forma circular/corazón
+    const angle = Math.random() * Math.PI * 2;
+    const radius = Math.random() * 120; // Radio de la copa del árbol
+    const x = Math.cos(angle) * radius + 130; 
+    const y = Math.sin(angle) * radius + 100;
 
-    leaves.appendChild(heart);
+    heart.style.left = `${x}px`;
+    heart.style.top = `${y}px`;
+    
+    // Tamaños y tiempos aleatorios para naturalidad
+    heart.style.fontSize = `${Math.random() * 15 + 10}px`;
+    heart.style.animationDelay = `${Math.random() * 2}s`;
+    heart.style.animationDuration = `${Math.random() * 2 + 2}s`;
+
+    leavesContainer.appendChild(heart);
 }
 
-// INICIAR
+// INICIAR AL CARGAR
 window.onload = function() {
-    typeWriter("title", titleText, 40, function() {
-        typeWriter("text1", text1, 25, function() {
-            typeWriter("text2", text2, 25, function() {
-                typeWriter("final", finalText, 40);
+    typeWriter("title", titleText, 50, () => {
+        typeWriter("text1", text1, 30, () => {
+            typeWriter("text2", text2, 30, () => {
+                typeWriter("final", finalText, 50);
             });
         });
     });
-
     updateTime();
 };
